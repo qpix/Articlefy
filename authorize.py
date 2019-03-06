@@ -3,6 +3,11 @@ from functools import wraps
 from base64 import b64decode
 import csv
 
+def error(message):
+    return '{"error": "' + str(message) + '"}', 401, {
+        'WWW-Authenticate': 'Basic'
+    }
+
 def get_basic_authorization_components():
     authorization = request.headers.get('Authorization')
     if not authorization:
@@ -39,7 +44,7 @@ def basic(f):
         try:
             auth = get_basic_authorization_components()
         except Exception as e:
-            return str(e), 400
+            return error(e)
 
         authorized = check_username_password(
             auth['username'],
@@ -49,5 +54,5 @@ def basic(f):
         if authorized:
             return f(*args, **kwds)
         else:
-            return 'The username or password is incorrect.', 401
+            return error('The username or password is incorrect.')
     return wrapper

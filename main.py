@@ -2,7 +2,10 @@ import a
 import authorize
 import json
 from flask import Flask, request
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app, origins='http://127.0.0.1:3000', supports_credentials=True)
 
 def info(message):
     return json.dumps({
